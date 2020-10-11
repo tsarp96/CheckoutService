@@ -36,4 +36,14 @@ public class CartsRepository {
         return cart;
     }
 
+    public void deleteById(String cartId){
+        String statement = String.format("Delete from CartDB where id = \"%s\"",cartId);
+        QueryResult query = couchbaseCluster.query(statement);
+    }
+
+    public List<Cart> getCartByUserID(String id) {
+        String statement = String.format("Select * from CartDB where userId = '%s'", id);
+        QueryResult query = couchbaseCluster.query(statement);
+        return query.rowsAs(Cart.class);
+    }
 }
