@@ -2,7 +2,9 @@ package com.trendyol.checkout.controllers;
 
 import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import com.trendyol.checkout.domain.Cart;
+import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.services.CartsService;
+import com.trendyol.checkout.services.RestService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +18,21 @@ import java.util.List;
 public class CartsController {
 
     private final CartsService cartsService;
+    private final RestService restService;
 
-    public CartsController(CartsService cartsService) {
+    public CartsController(CartsService cartsService, RestService restService) {
+        this.restService = restService;
         this.cartsService = cartsService;
+    }
+
+    @GetMapping("/testrestGetProductPlainJSON")
+    public ResponseEntity<String> testRest(){
+        return  ResponseEntity.ok(restService.getPostsPlainJSON());
+    }
+
+    @GetMapping("/testrestGetProductAsObject")
+    public ResponseEntity<Product> testRest2(){
+        return  ResponseEntity.ok(restService.getProductAsObject());
     }
 
     @PostMapping

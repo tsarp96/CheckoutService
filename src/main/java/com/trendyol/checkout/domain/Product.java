@@ -9,8 +9,19 @@ import lombok.Setter;
 @Builder
 public class Product {
     private String id;
-    private String name;
-    private String detail;
     private String category;
-    private String variant;
+    private double price;
+    private String description;
+    private int quantity;
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id='" + id + '\'' +
+                ", category='" + category + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", quantity=" + quantity +
+                '}';
+    }
 }

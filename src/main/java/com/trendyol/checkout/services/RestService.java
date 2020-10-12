@@ -1,6 +1,7 @@
 package com.trendyol.checkout.services;
 
 import com.trendyol.checkout.domain.Post;
+import com.trendyol.checkout.domain.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -28,13 +29,13 @@ public class RestService {
 
     // GET
     public String getPostsPlainJSON() {
-        String url = "https://jsonplaceholder.typicode.com/posts";
+        String url = "http://localhost:8081/v1/products/826b58e2-3a93-4cc0-ba9e-7e75d6200d17";
         return this.restTemplate.getForObject(url, String.class);
     }
 
-    public Post[] getPostsAsObject() {
-        String url = "https://jsonplaceholder.typicode.com/posts";
-        return this.restTemplate.getForObject(url, Post[].class);
+    public Product getProductAsObject() {
+        String url = "http://localhost:8081/v1/products/826b58e2-3a93-4cc0-ba9e-7e75d6200d17";
+        return this.restTemplate.getForObject(url, Product.class);
     }
 
     public Post getPostWithUrlParameters() {
