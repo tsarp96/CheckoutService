@@ -1,6 +1,5 @@
 package com.trendyol.checkout.controllers;
 
-import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.services.CartsService;
@@ -60,6 +59,11 @@ public class CartsController {
 
     @PostMapping("/{cartId}/items/{itemId}")
     public ResponseEntity addItem(@PathVariable String cartId, @PathVariable String itemId){
+        //TODO: GET Product Service with productId - DONE
+        Product product = restService.getProductByIdAsObject(itemId);
+        //TODO: GET Stock Service /products/product-id/stocks - check for stocks
+        //TODO: According to http response return an exception or success response -- Error handling
+        //---------------------------------------------
         cartsService.addItemToCart(cartId, itemId);
         return ResponseEntity.ok().build();
     }
