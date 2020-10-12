@@ -38,6 +38,11 @@ public class RestService {
         return this.restTemplate.getForObject(url, Product.class);
     }
 
+    public Product getProductByIdAsObject(String id) {
+        String url = "http://localhost:8081/v1/products/" + id;
+        return this.restTemplate.getForObject(url, Product.class);
+    }
+
     public Post getPostWithUrlParameters() {
         String url = "https://jsonplaceholder.typicode.com/posts/{id}";
         return this.restTemplate.getForObject(url, Post.class, 1);
