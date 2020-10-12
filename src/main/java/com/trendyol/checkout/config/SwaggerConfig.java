@@ -28,8 +28,8 @@ public class SwaggerConfig {
     }
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Playlist App")
-                .description("Playlists are on fire !")
+                .title("Checkout App")
+                .description("Kodluyoruz - Trendyol Bootcamp Graduation Project")
                 .build();
     }
 }
