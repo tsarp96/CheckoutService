@@ -5,6 +5,7 @@ import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,8 +60,13 @@ public class CartsController {
 
     @PostMapping("/{cartId}/items/{itemId}")
     public ResponseEntity addItem(@PathVariable String cartId, @PathVariable String itemId){
-        //TODO: GET Product Service with productId - DONE
-        Product product = restService.getProductByIdAsObject(itemId);
+        //TODO: GET Product Service with productId
+        //TODO: Check case : productId does not exist
+        try{
+            Product product = restService.getProductByIdAsObject(itemId);
+        }catch (HttpStatusCodeException ex){
+
+        }
         //TODO: GET Stock Service /products/product-id/stocks - check for stocks
         //TODO: According to http response return an exception or success response -- Error handling
         //---------------------------------------------
