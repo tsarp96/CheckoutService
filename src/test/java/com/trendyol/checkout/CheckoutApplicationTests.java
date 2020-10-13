@@ -71,9 +71,6 @@ class CheckoutApplicationTests {
         //Given
         Cart mockCart = new Cart();
         //When
-        when(cartsService.createCart(any(Cart.class)))
-                .thenReturn(mockCart);
-
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/carts")
                 .accept(MediaType.APPLICATION_JSON)

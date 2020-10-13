@@ -18,14 +18,8 @@ public class CartsService {
     }
 
     @Async
-    public Cart createCart(Cart cart) {
-        try{
-            cartsRepository.insert(cart);
-            return cart;
-        }catch (Exception ex){
-            System.out.println(ex);
-            return null;
-        }
+    public void createCart(Cart cart) {
+        cartsRepository.insert(cart);
     }
 
     public void deleteById(String cartId) {

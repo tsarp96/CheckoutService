@@ -40,8 +40,15 @@ public class CartsController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createCart(@RequestBody Cart cart) {
-        cartsService.createCart(cart);
+    public ResponseEntity createCart(@RequestBody Cart cart) {
+        try{
+            cartsService.createCart(cart);
+        }catch (RuntimeException ex){
+            return new ResponseEntity<>(
+                    "Something went wrong on our side !",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
