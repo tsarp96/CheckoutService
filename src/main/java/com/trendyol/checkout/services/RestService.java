@@ -5,6 +5,7 @@ import com.trendyol.checkout.domain.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,7 +41,12 @@ public class RestService {
 
     public Product getProductByIdAsObject(String id) {
         String url = "http://localhost:8081/v1/products/" + id;
-        return this.restTemplate.getForObject(url, Product.class);
+        try{
+            return this.restTemplate.getForObject(url, Product.class);
+        }catch (HttpStatusCodeException ex){
+            System.out.println(ex.getRawStatusCode());
+        }
+        return null;
     }
 
     public Post getPostWithUrlParameters() {

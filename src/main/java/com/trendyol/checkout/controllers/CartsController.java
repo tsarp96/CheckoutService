@@ -68,10 +68,21 @@ public class CartsController {
 
         }
         //TODO: GET Stock Service /products/product-id/stocks - check for stocks
+
         //TODO: According to http response return an exception or success response -- Error handling
         //---------------------------------------------
         cartsService.addItemToCart(cartId, itemId);
         return ResponseEntity.ok().build();
     }
 
+    //TODO: GET CART REQUEST /carts/{cartsId}
+        //TODO:  GET PRODUCTS  /products/
+        //TODO:  GET STOCKS -- stock control
+    //TODO: DELETE ITEM
+        //TODO: GET PRODUCT
+        //TODO: STOCK CONTROL
+    //TODO: UPDATE ITEM (CHANGE QUANTITY)
+        //TODO: GET PRODUCT
+        //TODO: GET STOKCS
+        // ARRANGE CART - UPDATE CART
 }
