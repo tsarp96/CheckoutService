@@ -7,6 +7,7 @@ import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -69,20 +70,31 @@ public class CartsController {
         return ResponseEntity.ok(carts);
     }
 
+    @GetMapping("/{cartId}")
+    public ResponseEntity<Cart> getCartById(@PathVariable String cartId){
+        Cart cart = cartsService.getCartById(cartId);
+        return ResponseEntity.ok(cart);
+    }
+
     @PostMapping("/{cartId}/items/{itemId}")
-    // 200 OK - Product exists,  Stock Available
-    // 204 NoContent - Product exists , No Stock Available
     public ResponseEntity<Void> addItem(@PathVariable String cartId, @PathVariable String itemId){
         try{
             Product product = restService.getProductByIdAsObject(itemId);
             if(!restService.isStockAvailableForProductId(product.getId())){
-                return ResponseEntity.noContent().build();
+                return new ResponseEntity(
+                        "No Available Stock for Product !",
+                        HttpStatus.NO_CONTENT);
             }
             cartsService.addItemToCart(cartId, product);
         }catch (HttpStatusCodeException ex){
-            System.out.println(ex.getRawStatusCode() + " Product does not exist !");
+            System.out.println(ex.getRawStatusCode());
+            return new ResponseEntity(
+                    "PRODUCT DOES NOT EXIST !",
+                    HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok().build();
+        return new ResponseEntity(
+                "THE PRODUCT WAS ADDED TO YOUR CART SUCCESSFULLY !",
+                HttpStatus.OK);
     }
 
 

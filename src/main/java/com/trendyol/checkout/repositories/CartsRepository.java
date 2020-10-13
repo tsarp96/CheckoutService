@@ -4,10 +4,14 @@ import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.kv.MutateInSpec;
 import com.couchbase.client.java.query.QueryResult;
 import com.trendyol.checkout.domain.Cart;
+import com.trendyol.checkout.domain.Product;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +46,14 @@ public class CartsRepository {
     }
 
     public List<Cart> getCartByUserID(String id) {
-        String statement = String.format("Select * from CartDB where userId = '%s'", id);
+        String statement = String.format("Select id,products,cartPrice,userId,discountRatio from CartDB where userId = '%s'", id);
         QueryResult query = couchbaseCluster.query(statement);
         return query.rowsAs(Cart.class);
+    }
+
+    public void addItemToCart(String cartId, Product product) {
+        cartsCollection.mutateIn(cartId, Arrays.asList(
+                MutateInSpec.arrayAppend("products", Collections.singletonList(product))
+        ));
     }
 }

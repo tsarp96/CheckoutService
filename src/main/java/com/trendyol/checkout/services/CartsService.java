@@ -31,7 +31,10 @@ public class CartsService {
     }
 
     public void addItemToCart(String cartId, Product product) {
-        System.out.println("add item");
+        cartsRepository.addItemToCart(cartId, product);
     }
 
+    public Cart getCartById(String cartId) {
+        return cartsRepository.findById(cartId);
+    }
 }

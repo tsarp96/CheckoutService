@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class Product {
     private String id;
     private String category;
@@ -14,6 +13,8 @@ public class Product {
     private String description;
     private int quantity;
 
+    public Product(){
+    }
     @Override
     public String toString() {
         return "Product{" +
