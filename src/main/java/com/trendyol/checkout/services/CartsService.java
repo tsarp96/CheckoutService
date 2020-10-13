@@ -1,6 +1,7 @@
 package com.trendyol.checkout.services;
 
 import com.trendyol.checkout.domain.Cart;
+import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.repositories.CartsRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,8 @@ public class CartsService {
         return cartsRepository.getCartByUserID(userId);
     }
 
-    public void addItemToCart(String cartId, String itemId) {
-
+    public void addItemToCart(String cartId, Product product) {
+        System.out.println("add item");
     }
 
 }

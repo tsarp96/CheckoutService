@@ -2,6 +2,7 @@ package com.trendyol.checkout.controllers;
 
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
+import com.trendyol.checkout.domain.Stock;
 import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
 import org.springframework.http.ResponseEntity;
@@ -59,19 +60,18 @@ public class CartsController {
     }
 
     @PostMapping("/{cartId}/items/{itemId}")
-    public ResponseEntity addItem(@PathVariable String cartId, @PathVariable String itemId){
-        //TODO: GET Product Service with productId
-        //TODO: Check case : productId does not exist
+    // 200 OK - Product exists,  Stock Available
+    // 204 NoContent - Product exists , No Stock Available
+    public ResponseEntity<Void> addItem(@PathVariable String cartId, @PathVariable String itemId){
         try{
             Product product = restService.getProductByIdAsObject(itemId);
+            if(!restService.isStockAvailableForProductId(product.getId())){
+                return ResponseEntity.noContent().build();
+            }
+            cartsService.addItemToCart(cartId, product);
         }catch (HttpStatusCodeException ex){
-
+            System.out.println(ex.getRawStatusCode() + " Product does not exist !");
         }
-        //TODO: GET Stock Service /products/product-id/stocks - check for stocks
-
-        //TODO: According to http response return an exception or success response -- Error handling
-        //---------------------------------------------
-        cartsService.addItemToCart(cartId, itemId);
         return ResponseEntity.ok().build();
     }
 
@@ -83,6 +83,6 @@ public class CartsController {
         //TODO: STOCK CONTROL
     //TODO: UPDATE ITEM (CHANGE QUANTITY)
         //TODO: GET PRODUCT
-        //TODO: GET STOKCS
+        //TODO: GET STOCKS
         // ARRANGE CART - UPDATE CART
 }

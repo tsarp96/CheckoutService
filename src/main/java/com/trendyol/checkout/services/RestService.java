@@ -2,6 +2,8 @@ package com.trendyol.checkout.services;
 
 import com.trendyol.checkout.domain.Post;
 import com.trendyol.checkout.domain.Product;
+import com.trendyol.checkout.domain.Stock;
+import com.trendyol.checkout.exceptions.NoAvailableStockForRequestedProductException;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -10,10 +12,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class RestService {
@@ -47,6 +46,24 @@ public class RestService {
             System.out.println(ex.getRawStatusCode());
         }
         return null;
+    }
+
+    public boolean isStockAvailableForProductId(String id){
+        String url = "http://localhost:8082/products/" + id + "/stocks";
+        try{
+            Stock[] stocks = this.restTemplate.getForObject(url, Stock[].class);
+            assert stocks != null;
+            if (stocks[0].getQuantity() == 0){
+                throw new NoAvailableStockForRequestedProductException();
+            }
+            return true;
+        }catch (HttpStatusCodeException ex){
+            System.out.println(ex.getRawStatusCode());
+            return false;
+        }catch (NoAvailableStockForRequestedProductException ex){
+            System.out.println("No Available Stock");
+            return false;
+        }
     }
 
     public Post getPostWithUrlParameters() {
