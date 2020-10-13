@@ -3,6 +3,7 @@ package com.trendyol.checkout.services;
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.repositories.CartsRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +17,15 @@ public class CartsService {
         this.cartsRepository = cartsRepository;
     }
 
-    public void createCart(Cart cart) {
-        cartsRepository.insert(cart);
+    @Async
+    public Cart createCart(Cart cart) {
+        try{
+            cartsRepository.insert(cart);
+            return cart;
+        }catch (Exception ex){
+            System.out.println(ex);
+            return null;
+        }
     }
 
     public void deleteById(String cartId) {
