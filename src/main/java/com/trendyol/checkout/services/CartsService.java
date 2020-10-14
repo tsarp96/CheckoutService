@@ -26,7 +26,7 @@ public class CartsService {
         cartsRepository.deleteById(cartId);
     }
 
-    public List<Cart> getCartByUserId(String userId){
+    public Cart getCartByUserId(String userId){
         return cartsRepository.getCartByUserID(userId);
     }
 

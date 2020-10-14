@@ -2,21 +2,13 @@ package com.trendyol.checkout.controllers;
 
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
-import com.trendyol.checkout.domain.Stock;
 import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.support.WebExchangeBindException;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
-
-
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/carts")
@@ -28,16 +20,6 @@ public class CartsController {
     public CartsController(CartsService cartsService, RestService restService) {
         this.restService = restService;
         this.cartsService = cartsService;
-    }
-
-    @GetMapping("/testrestGetProductPlainJSON")
-    public ResponseEntity<String> testRest(){
-        return  ResponseEntity.ok(restService.getPostsPlainJSON());
-    }
-
-    @GetMapping("/testrestGetProductAsObject")
-    public ResponseEntity<Product> testRest2(){
-        return  ResponseEntity.ok(restService.getProductAsObject());
     }
 
     @PostMapping
@@ -65,14 +47,24 @@ public class CartsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Cart>> getCartByUserId(@RequestParam(name = "userId") String userId){
-        List<Cart> carts = cartsService.getCartByUserId(userId);
-        return ResponseEntity.ok(carts);
+    public ResponseEntity<Cart> getCartByUserId(@RequestParam(name = "userId") String userId){
+        Cart cart = cartsService.getCartByUserId(userId);
+        if(cart == null){
+            return new ResponseEntity(
+                    "No Cart Found with userID: " + userId,
+                    HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(cart);
     }
 
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCartById(@PathVariable String cartId){
         Cart cart = cartsService.getCartById(cartId);
+        if(cart == null){
+            return new ResponseEntity(
+                    "No Cart Found with ID: " + cartId,
+                    HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(cart);
     }
 
@@ -84,11 +76,9 @@ public class CartsController {
                         "There is no such item !",
                         HttpStatus.NO_CONTENT);
             }
-            if(!restService.isStockAvailableForProductId(product.getId())){
-                return new ResponseEntity(
-                        "No Available Stock for Product !",
-                        HttpStatus.NO_CONTENT);
-            }
+            if(!restService.isStockAvailableForProductId(product.getId())) return new ResponseEntity(
+                    "No Available Stock for Product !",
+                    HttpStatus.NO_CONTENT);
             cartsService.addItemToCart(cartId, product);
         return new ResponseEntity(
                 "THE PRODUCT WAS ADDED TO YOUR CART SUCCESSFULLY !",

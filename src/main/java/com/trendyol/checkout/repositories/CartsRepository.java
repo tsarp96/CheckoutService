@@ -45,10 +45,10 @@ public class CartsRepository {
         QueryResult query = couchbaseCluster.query(statement);
     }
 
-    public List<Cart> getCartByUserID(String id) {
+    public Cart getCartByUserID(String id) {
         String statement = String.format("Select id,products,cartPrice,userId,discountRatio from CartDB where userId = '%s'", id);
         QueryResult query = couchbaseCluster.query(statement);
-        return query.rowsAs(Cart.class);
+        return query.rowsAs(Cart.class).get(0);
     }
 
     public void addItemToCart(String cartId, Product product) {

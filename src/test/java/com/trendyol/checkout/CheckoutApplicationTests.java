@@ -57,16 +57,12 @@ class CheckoutApplicationTests {
 
     @Autowired
     private MockMvc mvc;
-
     @MockBean
     private CartsService cartsService;
-
     @MockBean
     private RestService restService;
-
     @InjectMocks
     private CartsController cartsController;
-
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -143,6 +139,76 @@ class CheckoutApplicationTests {
         when(restService.isStockAvailableForProductId(product.getId())).thenReturn(true);
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/carts/"+ cartId + "/items/" + itemId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void getCartById_whenCartIsNull_ShouldReturn404() throws Exception {
+        //Given
+        String cartId = "987987";
+        //When
+        when(cartsService.getCartById(cartId)).thenReturn(null);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/carts/"+ cartId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void getCartById_whenEverythingIsOK_ShouldReturn200() throws Exception {
+        //Given
+        String cartId = "987987";
+        Cart cart = new Cart();
+        //When
+        when(cartsService.getCartById(cartId)).thenReturn(cart);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/carts/"+ cartId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void getCartByUserId_whenUserIDIsNotValid_ShouldReturn404() throws Exception{
+        //Given
+        String userID = "444";
+        //When
+        when(cartsService.getCartByUserId(userID)).thenReturn(null);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/carts?userId="+ userID )
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void getCartByUserId_whenEverythingIsOK_ShouldReturn200() throws Exception{
+        //Given
+        String userID = "444";
+        Cart cart = new Cart();
+        //When
+        when(cartsService.getCartByUserId(userID)).thenReturn(cart);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .get("/carts?userId="+ userID )
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
