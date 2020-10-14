@@ -80,6 +80,11 @@ public class CartsController {
     public ResponseEntity<Void> addItem(@PathVariable String cartId, @PathVariable String itemId){
         try{
             Product product = restService.getProductByIdAsObject(itemId);
+            if(product == null){
+                return new ResponseEntity(
+                        "There is no such item !",
+                        HttpStatus.NO_CONTENT);
+            }
             if(!restService.isStockAvailableForProductId(product.getId())){
                 return new ResponseEntity(
                         "No Available Stock for Product !",

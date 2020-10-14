@@ -5,7 +5,9 @@ package com.trendyol.checkout;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trendyol.checkout.controllers.CartsController;
 import com.trendyol.checkout.domain.Cart;
+import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.services.CartsService;
+import com.trendyol.checkout.services.RestService;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -38,7 +40,10 @@ import java.nio.charset.Charset;
 import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -56,6 +61,9 @@ class CheckoutApplicationTests {
     @MockBean
     private CartsService cartsService;
 
+    @MockBean
+    private RestService restService;
+
     @InjectMocks
     private CartsController cartsController;
 
@@ -66,8 +74,7 @@ class CheckoutApplicationTests {
     }
 
     @Test
-    public void createCart_whenCartIsNew_ShouldReturn201WithProperLocationHeader()
-            throws Exception {
+    public void createCart_whenCartIsNew_ShouldReturn201WithProperLocationHeader() throws Exception {
         //Given
         Cart mockCart = new Cart();
         //When
@@ -83,6 +90,62 @@ class CheckoutApplicationTests {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
         assertThat(response.getHeader(HttpHeaders.LOCATION))
                 .isEqualTo("http://localhost/carts/" + mockCart.getId());
+    }
+
+    @Test
+    public void addItem_WhenItemIdIsNotExist_ShouldReturn204() throws Exception {
+        //Given
+        String itemId = "646549846";
+        //When
+        when(restService.getProductByIdAsObject(itemId)).thenReturn(null);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/carts/123123213/items/1231231")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    public void addItem_whenStockIsNotAvailable_ShouldReturn204() throws Exception {
+        //Given
+        Product product = new Product();
+        //When
+        when(restService.getProductByIdAsObject(product.getId())).thenReturn(product);
+        when(restService.isStockAvailableForProductId(product.getId())).thenReturn(false);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/carts/123123213/items/1231231")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+
+    @Test
+    public void addItem_whenStockIsAvailable_ShouldReturn200() throws Exception {
+        //Given
+        String cartId = "987987";
+        String itemId = "1231231";
+        Product product = new Product();
+        product.setId(itemId);
+        //When
+        when(restService.getProductByIdAsObject(itemId)).thenReturn(product);
+        when(restService.isStockAvailableForProductId(product.getId())).thenReturn(true);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/carts/"+ cartId + "/items/" + itemId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
     }
 
     public static MediaType getJsonMediaType() {
