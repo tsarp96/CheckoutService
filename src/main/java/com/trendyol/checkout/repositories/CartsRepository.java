@@ -4,11 +4,16 @@ import com.couchbase.client.core.error.DocumentNotFoundException;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.Collection;
 import com.couchbase.client.java.kv.GetResult;
+import com.couchbase.client.java.codec.TypeRef;
+import com.couchbase.client.java.kv.LookupInResult;
 import com.couchbase.client.java.kv.MutateInSpec;
 import com.couchbase.client.java.query.QueryResult;
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
 import org.springframework.stereotype.Repository;
+import static com.couchbase.client.java.kv.LookupInSpec.get;
+import static com.couchbase.client.java.kv.MutateInSpec.decrement;
+import static com.couchbase.client.java.kv.MutateInSpec.replace;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,5 +60,20 @@ public class CartsRepository {
         cartsCollection.mutateIn(cartId, Arrays.asList(
                 MutateInSpec.arrayAppend("products", Collections.singletonList(product))
         ));
+    }
+    public void removeItemFromCart(String cartId, String itemId) {
+        List<Product> products = getProducts(cartId);
+        products.removeIf(product ->product.getId().equals(itemId));
+        cartsCollection.mutateIn(cartId, Arrays.asList(
+                replace("products", products)
+        ));
+    }
+    public List<Product> getProducts(String cartId){
+        LookupInResult result = cartsCollection.lookupIn(
+                cartId,
+                Collections.singletonList(get("products"))
+        );
+        return result.contentAs(0, new TypeRef<List<Product>>() {
+        });
     }
 }

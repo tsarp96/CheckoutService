@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
+
 @RestController
 @RequestMapping("/carts")
 public class CartsController {
@@ -82,6 +83,14 @@ public class CartsController {
             cartsService.addItemToCart(cartId, product);
         return new ResponseEntity(
                 "THE PRODUCT WAS ADDED TO YOUR CART SUCCESSFULLY !",
+                HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{cartId}/items/{itemId}")
+    public ResponseEntity<Void>deleteItem(@PathVariable String cartId, @PathVariable String itemId){
+        cartsService.removeItemFromCart(cartId, itemId);
+        return new ResponseEntity(
+                "Product: " + itemId + " is removed from cart " + cartId ,
                 HttpStatus.OK);
     }
 

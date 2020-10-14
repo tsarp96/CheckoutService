@@ -37,4 +37,9 @@ public class CartsService {
     public Cart getCartById(String cartId) {
         return cartsRepository.findById(cartId);
     }
+
+    public void removeItemFromCart(String cartId, String itemId){
+        cartsRepository.removeItemFromCart(cartId, itemId);
+    }
+
 }
