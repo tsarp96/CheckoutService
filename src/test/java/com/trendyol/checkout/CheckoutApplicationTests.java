@@ -112,12 +112,15 @@ class CheckoutApplicationTests {
     @Test
     public void addItem_whenStockIsNotAvailable_ShouldReturn204() throws Exception {
         //Given
+        String cartId = "987987";
+        String itemId = "1231231";
         Product product = new Product();
+        product.setId(itemId);
         //When
-        when(restService.getProductByIdAsObject(product.getId())).thenReturn(product);
+        when(restService.getProductByIdAsObject(itemId)).thenReturn(product);
         when(restService.isStockAvailableForProductId(product.getId())).thenReturn(false);
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/carts/123123213/items/1231231")
+                .post("/carts/"+ cartId + "/items/" + itemId )
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -125,6 +128,7 @@ class CheckoutApplicationTests {
         MockHttpServletResponse response = result.getResponse();
         //Then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(response.getContentAsString()).isEqualTo("No Available Stock for Product !");
     }
 
     @Test

@@ -78,7 +78,6 @@ public class CartsController {
 
     @PostMapping("/{cartId}/items/{itemId}")
     public ResponseEntity<Void> addItem(@PathVariable String cartId, @PathVariable String itemId){
-        try{
             Product product = restService.getProductByIdAsObject(itemId);
             if(product == null){
                 return new ResponseEntity(
@@ -91,12 +90,6 @@ public class CartsController {
                         HttpStatus.NO_CONTENT);
             }
             cartsService.addItemToCart(cartId, product);
-        }catch (HttpStatusCodeException ex){
-            System.out.println(ex.getRawStatusCode());
-            return new ResponseEntity(
-                    "PRODUCT DOES NOT EXIST !",
-                    HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity(
                 "THE PRODUCT WAS ADDED TO YOUR CART SUCCESSFULLY !",
                 HttpStatus.OK);
