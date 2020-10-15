@@ -2,6 +2,7 @@ package com.trendyol.checkout.controllers;
 
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
+import com.trendyol.checkout.exceptions.NoAvailableStockForRequestedProductException;
 import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
 import org.springframework.http.HttpStatus;
@@ -87,12 +88,24 @@ public class CartsController {
     }
 
     @DeleteMapping("/{cartId}/items/{itemId}")
-    public ResponseEntity<Void>deleteItem(@PathVariable String cartId, @PathVariable String itemId){
+    public ResponseEntity<Void>deleteItem(@PathVariable String cartId, @PathVariable String itemId) {
+        Product product = restService.getProductByIdAsObject(itemId);
+        Cart cart = restService.getCartByIdAsObject(cartId);
+        if (product == null) {
+            return new ResponseEntity(
+                    "There is no such item !",
+                    HttpStatus.NO_CONTENT);
+        }
+        if(!restService.isProductInCart(cart,product))
+        {return new ResponseEntity(
+                "Product is not in cart!",HttpStatus.NO_CONTENT);}
         cartsService.removeItemFromCart(cartId, itemId);
         return new ResponseEntity(
-                "Product: " + itemId + " is removed from cart " + cartId ,
+                "Product: " + itemId + " is removed from cart " + cartId,
                 HttpStatus.OK);
     }
+
+
 
 
     //TODO: GET CART REQUEST /carts/{cartsId}

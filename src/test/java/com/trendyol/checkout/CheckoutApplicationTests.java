@@ -27,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -218,6 +219,70 @@ class CheckoutApplicationTests {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
     }
 
+    @Test
+    public void deleteItem_whenItemIdIsNotExist_ShouldReturn204() throws Exception {
+        //Given
+        String itemId = "123456789";
+        //When
+        when(restService.getProductByIdAsObject(itemId)).thenReturn(null);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/carts/123123213/items/1231231")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+    }
+    @Test
+    public void deleteItem_whenItemIsInCart_ShouldReturn200() throws Exception {
+        //Given
+        String cartId = "987987";
+        String itemId = "1231231";
+        Product product = new Product();
+        Cart cart = new Cart();
+        product.setId(itemId);
+        cart.setId(cartId);
+        //When
+        when(restService.getProductByIdAsObject(itemId)).thenReturn(product);
+        when(restService.getCartByIdAsObject(cartId)).thenReturn(cart);
+        when(restService.isProductInCart(cart, product)).thenReturn(true);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/carts/"+ cartId + "/items/" + itemId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_OK);
+
+    }
+    @Test
+    public void deleteItem_whenItemIsNotInCart_ShouldReturn204() throws Exception {
+        //Given
+        String cartId = "987987";
+        String itemId = "1231231";
+        Product product = new Product();
+        Cart cart = new Cart();
+        product.setId(itemId);
+        cart.setId(cartId);
+        //When
+        when(restService.getProductByIdAsObject(itemId)).thenReturn(product);
+        when(restService.getCartByIdAsObject(cartId)).thenReturn(cart);
+        when(restService.isProductInCart(cart, product)).thenReturn(false);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .delete("/carts/"+ cartId + "/items/" + itemId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(response.getContentAsString()).isEqualTo("Product is not in cart!");
+    }
     public static MediaType getJsonMediaType() {
         return new MediaType(MediaType.APPLICATION_JSON.getType(),
                 MediaType.APPLICATION_JSON.getSubtype(),

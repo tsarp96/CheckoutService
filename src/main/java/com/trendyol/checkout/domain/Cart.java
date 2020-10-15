@@ -9,7 +9,8 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Cart {
-    private final String id;
+    //private final String id;
+    private String id;
     private List<Product> products;
     private double cartPrice;
     private String userId;
@@ -17,4 +18,6 @@ public class Cart {
     public Cart(){
         this.id = UUID.randomUUID().toString();
     }
+
+
 }

@@ -1,13 +1,14 @@
 package com.trendyol.checkout.services;
 
+import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Post;
 import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.domain.Stock;
 import com.trendyol.checkout.exceptions.NoAvailableStockForRequestedProductException;
+import com.trendyol.checkout.exceptions.ProductNotInCart;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,7 +48,33 @@ public class RestService {
         }
         return null;
     }
+    public Cart getCartByIdAsObject(String id) {
+        String url = "http://localhost:8080/carts/" + id;
+        try{
+            return this.restTemplate.getForObject(url, Cart.class);
+        }catch (HttpStatusCodeException ex){
+            System.out.println(ex.getRawStatusCode());
+        }
+        return null;
+    }
+    public boolean isProductInCart(Cart cart, Product product){
+        String url = "http://localhost:8080/carts/" + cart.getId();
+        try{
 
+            for (int counter = 0; counter < cart.getProducts().size(); counter++) {
+                if (product.getId().equals(cart.getProducts().get(counter).getId())){
+                    return true;
+                }}
+                throw new ProductNotInCart();
+                //return true;
+            }catch (HttpStatusCodeException ex){
+                System.out.println(ex.getRawStatusCode());
+                return false;
+            }catch (ProductNotInCart ex){
+                System.out.println("Product is not in Cart");
+                return false;
+            }
+    }
     public boolean isStockAvailableForProductId(String id){
         String url = "http://localhost:8082/products/" + id + "/stocks";
         try{
