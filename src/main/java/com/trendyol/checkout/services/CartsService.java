@@ -2,11 +2,10 @@ package com.trendyol.checkout.services;
 
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
+import com.trendyol.checkout.exceptions.ItemAlreadyExistInCartException;
 import com.trendyol.checkout.repositories.CartsRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CartsService {
@@ -30,8 +29,15 @@ public class CartsService {
         return cartsRepository.getCartByUserID(userId);
     }
 
-    public void addItemToCart(String cartId, Product product) {
-        cartsRepository.addItemToCart(cartId, product);
+    public void addItemToCart(String cartId, Product productToBeAdd) throws ItemAlreadyExistInCartException {
+        Cart cart = cartsRepository.findById(cartId);
+        for (Product productInCart :
+                cart.getProducts()) {
+            if(productInCart.getId().equals(productToBeAdd.getId())){
+                throw new ItemAlreadyExistInCartException();
+            }
+        }
+        cartsRepository.addItemToCart(cartId, productToBeAdd);
     }
 
     public Cart getCartById(String cartId) {

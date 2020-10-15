@@ -5,6 +5,7 @@ import com.trendyol.checkout.domain.Post;
 import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.domain.Stock;
 import com.trendyol.checkout.exceptions.NoAvailableStockForRequestedProductException;
+//import com.trendyol.checkout.exceptions.ProductNotInCart;
 import com.trendyol.checkout.exceptions.ProductNotInCart;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -57,6 +58,7 @@ public class RestService {
         }
         return null;
     }
+
     public boolean isProductInCart(Cart cart, Product product){
         String url = "http://localhost:8080/carts/" + cart.getId();
         try{

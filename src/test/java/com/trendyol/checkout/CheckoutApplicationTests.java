@@ -283,6 +283,17 @@ class CheckoutApplicationTests {
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
         assertThat(response.getContentAsString()).isEqualTo("Product is not in cart!");
     }
+
+    /*@Test
+    public void addItem_whenBothItemsAreIdentical_ShouldThrowItemAlreadyExistInCartException(){
+        //Given
+        Cart sut = new Cart();
+        Product product = new Product();
+        String cartId = "dummyId";
+        //When
+        //When
+    }*/
+
     public static MediaType getJsonMediaType() {
         return new MediaType(MediaType.APPLICATION_JSON.getType(),
                 MediaType.APPLICATION_JSON.getSubtype(),

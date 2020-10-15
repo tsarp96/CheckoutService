@@ -2,6 +2,7 @@ package com.trendyol.checkout.controllers;
 
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
+import com.trendyol.checkout.exceptions.ItemAlreadyExistInCartException;
 import com.trendyol.checkout.exceptions.NoAvailableStockForRequestedProductException;
 import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
@@ -81,7 +82,14 @@ public class CartsController {
             if(!restService.isStockAvailableForProductId(product.getId())) return new ResponseEntity(
                     "No Available Stock for Product !",
                     HttpStatus.NO_CONTENT);
-            cartsService.addItemToCart(cartId, product);
+            try{
+                cartsService.addItemToCart(cartId, product);
+            }catch (ItemAlreadyExistInCartException e){
+                return new ResponseEntity(
+                        "Item already exist in your cart !",
+                        HttpStatus.NO_CONTENT);
+            }
+
         return new ResponseEntity(
                 "THE PRODUCT WAS ADDED TO YOUR CART SUCCESSFULLY !",
                 HttpStatus.OK);
