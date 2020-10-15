@@ -1,5 +1,6 @@
 package com.trendyol.checkout.controllers;
 
+import com.trendyol.checkout.UpdateDto.ItemQuantityDTO;
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.exceptions.ItemAlreadyExistInCartException;
@@ -97,7 +98,7 @@ public class CartsController {
     }
 
     @DeleteMapping("/{cartId}/items/{itemId}")
-    public ResponseEntity<Void> deleteItem(@PathVariable String cartId, @PathVariable String itemId) {
+    public ResponseEntity<Void> deleteItem(@PathVariable String cartId, @PathVariable String itemId, @RequestBody ItemQuantityDTO itemQuantityDTO) {
         Product product = restService.getProductByIdAsObject(itemId);
         Cart cart = restService.getCartByIdAsObject(cartId);
         if (product == null) {
