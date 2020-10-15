@@ -127,13 +127,17 @@ public class CartsController {
                     "There is no such item !",
                     HttpStatus.NO_CONTENT);
         }
-
         if (!restService.isStockAvailableForProductId(itemId)){
             return new ResponseEntity(
                     "There are not enough products in stock!",
                     HttpStatus.NO_CONTENT);
         }
-        cartsService.updateItemQuantity(cartId, itemId);
+        if (!restService.isProductInCart(cart, product)) {
+            return new ResponseEntity(
+                    "Product is not in cart!", HttpStatus.NO_CONTENT);
+        }
+
+        cartsService.updateItemQuantity(cartId, product);
         return new ResponseEntity(
                 "The quantity of the product has been updated!",
                 HttpStatus.OK);

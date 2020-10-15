@@ -48,7 +48,7 @@ public class CartsService {
     }
 
 
-    public void updateItemQuantity(String cartId, String itemId) {
+    public void updateItemQuantity(String cartId, Product product) {
         //TODO
     }
 }
