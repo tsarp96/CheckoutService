@@ -49,6 +49,10 @@ public class CartsService {
 
 
     public void updateItemQuantity(String cartId, Product product) {
-        //TODO
+        try {
+            cartsRepository.updateProduct(cartId, product);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(); // check again
+        }
     }
 }

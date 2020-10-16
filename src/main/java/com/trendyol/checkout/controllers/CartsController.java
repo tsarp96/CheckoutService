@@ -98,7 +98,7 @@ public class CartsController {
     }
 
     @DeleteMapping("/{cartId}/items/{itemId}")
-    public ResponseEntity<Void> deleteItem(@PathVariable String cartId, @PathVariable String itemId, @RequestBody ItemQuantityDTO itemQuantityDTO) {
+    public ResponseEntity<Void> deleteItem(@PathVariable String cartId, @PathVariable String itemId) {
         Product product = restService.getProductByIdAsObject(itemId);
         Cart cart = restService.getCartByIdAsObject(cartId);
         if (product == null) {
@@ -118,7 +118,7 @@ public class CartsController {
 
 
     @PatchMapping("/{cartId}/items/{itemId}")
-    public ResponseEntity<Void> updateItem(@PathVariable String cartId, @PathVariable String itemId) {
+    public ResponseEntity<Void> updateItem(@PathVariable String cartId, @PathVariable String itemId, @RequestBody ItemQuantityDTO itemQuantityDTO) {
         Product product = restService.getProductByIdAsObject(itemId);
         Cart cart = restService.getCartByIdAsObject(cartId);
 
@@ -136,7 +136,7 @@ public class CartsController {
             return new ResponseEntity(
                     "Product is not in cart!", HttpStatus.NO_CONTENT);
         }
-
+        product.setQuantity(itemQuantityDTO.getQuantity());
         cartsService.updateItemQuantity(cartId, product);
         return new ResponseEntity(
                 "The quantity of the product has been updated!",

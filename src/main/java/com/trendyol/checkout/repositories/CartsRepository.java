@@ -76,4 +76,8 @@ public class CartsRepository {
         return result.contentAs(0, new TypeRef<List<Product>>() {
         });
     }
+
+    public void updateProduct(String cartId, Product product) {
+        //TODO: update Product and Cart!
+    }
 }
