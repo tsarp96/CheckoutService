@@ -11,6 +11,7 @@ import com.couchbase.client.java.query.QueryResult;
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
 import org.springframework.stereotype.Repository;
+
 import static com.couchbase.client.java.kv.LookupInSpec.get;
 import static com.couchbase.client.java.kv.MutateInSpec.decrement;
 import static com.couchbase.client.java.kv.MutateInSpec.replace;
@@ -45,8 +46,8 @@ public class CartsRepository {
         return cart;
     }
 
-    public void deleteById(String cartId){
-        String statement = String.format("Delete from CartDB where id = \"%s\"",cartId);
+    public void deleteById(String cartId) {
+        String statement = String.format("Delete from CartDB where id = \"%s\"", cartId);
         QueryResult query = couchbaseCluster.query(statement);
     }
 
@@ -61,14 +62,16 @@ public class CartsRepository {
                 MutateInSpec.arrayAppend("products", Collections.singletonList(product))
         ));
     }
+
     public void removeItemFromCart(String cartId, String itemId) {
         List<Product> products = getProducts(cartId);
-        products.removeIf(product ->product.getId().equals(itemId));
+        products.removeIf(product -> product.getId().equals(itemId));
         cartsCollection.mutateIn(cartId, Arrays.asList(
                 replace("products", products)
         ));
     }
-    public List<Product> getProducts(String cartId){
+
+    public List<Product> getProducts(String cartId) {
         LookupInResult result = cartsCollection.lookupIn(
                 cartId,
                 Collections.singletonList(get("products"))
@@ -78,8 +81,6 @@ public class CartsRepository {
     }
 
     public void updateProduct(String cartId, Product product) {
-        //TODO: update Product and Cart!
-        // ??: Veritabanındaki product güncellenecek mi?
         removeItemFromCart(cartId, product.getId());
         addItemToCart(cartId, product);
     }
