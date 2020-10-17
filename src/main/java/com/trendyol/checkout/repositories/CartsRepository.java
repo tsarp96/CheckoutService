@@ -79,5 +79,8 @@ public class CartsRepository {
 
     public void updateProduct(String cartId, Product product) {
         //TODO: update Product and Cart!
+        // ??: Veritabanındaki product güncellenecek mi?
+        removeItemFromCart(cartId, product.getId());
+        addItemToCart(cartId, product);
     }
 }
