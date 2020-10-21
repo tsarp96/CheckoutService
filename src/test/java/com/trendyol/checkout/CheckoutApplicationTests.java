@@ -117,7 +117,7 @@ class CheckoutApplicationTests {
         product.setId(itemId);
         //When
         when(restService.getProductByIdAsObject(itemId)).thenReturn(product);
-        when(restService.isStockAvailableForProductId(product.getId())).thenReturn(false);
+        when(restService.isStockAvailableForProductId(product.getId(), product.getQuantity())).thenReturn(false);
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/carts/"+ cartId + "/items/" + itemId )
                 .accept(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ class CheckoutApplicationTests {
         product.setId(itemId);
         //When
         when(restService.getProductByIdAsObject(itemId)).thenReturn(product);
-        when(restService.isStockAvailableForProductId(product.getId())).thenReturn(true);
+        when(restService.isStockAvailableForProductId(product.getId(), product.getQuantity())).thenReturn(true);
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/carts/"+ cartId + "/items/" + itemId)
                 .accept(MediaType.APPLICATION_JSON)

@@ -77,12 +77,12 @@ public class RestService {
                 return false;
             }
     }
-    public boolean isStockAvailableForProductId(String id){
+    public boolean isStockAvailableForProductId(String id, int quantity){
         String url = "http://localhost:8082/products/" + id + "/stocks";
         try{
             Stock[] stocks = this.restTemplate.getForObject(url, Stock[].class);
             assert stocks != null;
-            if (stocks[0].getQuantity() == 0){
+            if (stocks[0].getQuantity() < quantity){
                 throw new NoAvailableStockForRequestedProductException();
             }
             return true;

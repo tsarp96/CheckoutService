@@ -96,7 +96,7 @@ public class CartsController {
             Product product = restService.getProductByIdAsObject(itemId);
             if (product == null) {
                 return new ResponseEntity("Product is null !", HttpStatus.NO_CONTENT); }
-            if (!restService.isStockAvailableForProductId(product.getId()))
+            if (!restService.isStockAvailableForProductId(product.getId(),product.getQuantity()))
                 return new ResponseEntity("No Available Stock for Product !", HttpStatus.NO_CONTENT);
             cartsService.addItemToCart(cartId, product);
 
@@ -141,29 +141,37 @@ public class CartsController {
     }
 
     @PatchMapping("/{cartId}/items/{itemId}")
-    public ResponseEntity<Void> updateItem(@PathVariable String cartId, @PathVariable String itemId, @RequestBody ItemQuantityDTO itemQuantityDTO) {
-        Product product = restService.getProductByIdAsObject(itemId);
-        Cart cart = restService.getCartByIdAsObject(cartId);
+    public ResponseEntity<Void> changeQuantityOfAnItemInCart(@PathVariable String cartId, @PathVariable String itemId, @RequestParam(name = "quantity") int quantity) {
+        try{
+            Product product = restService.getProductByIdAsObject(itemId);
+            Cart cart = restService.getCartByIdAsObject(cartId);
+            if (product == null) {
+                return new ResponseEntity(
+                        "There is no such item !",
+                        HttpStatus.NOT_FOUND);
+            }
+            if (!restService.isStockAvailableForProductId(itemId, quantity)){
+                return new ResponseEntity(
+                        "There are not enough products in stock!",
+                        HttpStatus.BAD_REQUEST);
+            }
+            if (!restService.isProductInCart(cart, product)) {
+                return new ResponseEntity(
+                        "Product is not in cart!", HttpStatus.NOT_FOUND);
+            }
+            product.setQuantity(quantity);
+            cartsService.updateItemQuantity(cartId, product);
+            return new ResponseEntity(
+                    "The quantity of the product has been updated!",
+                    HttpStatus.OK);
+        }catch (HttpStatusCodeException ex){
+            return new ResponseEntity(
+                    "Specific error handling for " + ex.getRawStatusCode(),
+                    HttpStatus.BAD_REQUEST);
+        }
 
-        if (product == null) {
-            return new ResponseEntity(
-                    "There is no such item !",
-                    HttpStatus.NO_CONTENT);
-        }
-        if (!restService.isStockAvailableForProductId(itemId)){
-            return new ResponseEntity(
-                    "There are not enough products in stock!",
-                    HttpStatus.NO_CONTENT);
-        }
-        if (!restService.isProductInCart(cart, product)) {
-            return new ResponseEntity(
-                    "Product is not in cart!", HttpStatus.NO_CONTENT);
-        }
-        product.setQuantity(itemQuantityDTO.getQuantity());
-        cartsService.updateItemQuantity(cartId, product);
-        return new ResponseEntity(
-                "The quantity of the product has been updated!",
-                HttpStatus.OK);
+
+
 
     }
 
