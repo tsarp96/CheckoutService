@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.trendyol.checkout.controllers.CartsController;
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
+import com.trendyol.checkout.exceptions.ItemAlreadyExistInCartException;
 import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
+import org.apache.http.HttpException;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -285,14 +287,24 @@ class CheckoutApplicationTests {
     }
 
     @Test
-    public void addItem_whenBothItemsAreIdentical_ShouldThrowItemAlreadyExistInCartException(){
+    public void addItem_whenBothItemsAreIdentical_ShouldThrowItemAlreadyExistInCartException() throws ItemAlreadyExistInCartException, Exception {
         //Given
         Cart sut = new Cart();
         Product product = new Product();
-        String cartId = "dummyId";
+        cartsService.addItemToCart(sut.getId(), product);
+
         //When
-        
-        //When
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/carts/"+ sut.getId() + "/items/" + product.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mvc.perform(requestBuilder).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+
+        //Then
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+
     }
 
     public static MediaType getJsonMediaType() {

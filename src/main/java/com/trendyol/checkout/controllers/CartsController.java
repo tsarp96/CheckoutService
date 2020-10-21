@@ -132,7 +132,6 @@ public class CartsController {
                 HttpStatus.OK);
     }
 
-
     @PatchMapping("/{cartId}/items/{itemId}")
     public ResponseEntity<Void> updateItem(@PathVariable String cartId, @PathVariable String itemId, @RequestBody ItemQuantityDTO itemQuantityDTO) {
         Product product = restService.getProductByIdAsObject(itemId);
