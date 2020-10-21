@@ -9,6 +9,7 @@ import com.trendyol.checkout.services.RestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -91,18 +92,20 @@ public class CartsController {
 
     @PostMapping("/{cartId}/items/{itemId}")
     public ResponseEntity<Void> addItem(@PathVariable String cartId, @PathVariable String itemId) {
-        Product product = restService.getProductByIdAsObject(itemId);
-        if (product == null) {
-            return new ResponseEntity(
-                    "There is no such item !",
-                    HttpStatus.NO_CONTENT);
-        }
-        if (!restService.isStockAvailableForProductId(product.getId())) return new ResponseEntity(
-                "No Available Stock for Product !",
-                HttpStatus.NO_CONTENT);
-        try {
+        try{
+            Product product = restService.getProductByIdAsObject(itemId);
+            if (product == null) {
+                return new ResponseEntity("Product is null !", HttpStatus.NO_CONTENT); }
+            if (!restService.isStockAvailableForProductId(product.getId()))
+                return new ResponseEntity("No Available Stock for Product !", HttpStatus.NO_CONTENT);
             cartsService.addItemToCart(cartId, product);
-        } catch (ItemAlreadyExistInCartException e) {
+
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
+            return new ResponseEntity(
+                    "No stock is defined for product !",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (ItemAlreadyExistInCartException e){
             return new ResponseEntity(
                     "Item already exist in your cart !",
                     HttpStatus.NO_CONTENT);
@@ -115,21 +118,26 @@ public class CartsController {
 
     @DeleteMapping("/{cartId}/items/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable String cartId, @PathVariable String itemId) {
-        Product product = restService.getProductByIdAsObject(itemId);
-        Cart cart = restService.getCartByIdAsObject(cartId);
-        if (product == null) {
+        try{
+            Product product = restService.getProductByIdAsObject(itemId);
+            if (product == null) {
+                return new ResponseEntity(
+                        "There is no such item !",
+                        HttpStatus.NOT_FOUND);
+            }
+            Cart cart = restService.getCartByIdAsObject(cartId);
+            if (!restService.isProductInCart(cart, product)) {
+                return new ResponseEntity(
+                        "Product is not in cart!", HttpStatus.NOT_FOUND);
+            }
+            cartsService.removeItemFromCart(cartId, itemId);
             return new ResponseEntity(
-                    "There is no such item !",
-                    HttpStatus.NO_CONTENT);
-        }
-        if (!restService.isProductInCart(cart, product)) {
+                    "Product: " + itemId + " is removed from cart " + cartId,
+                    HttpStatus.OK);
+        }catch (HttpStatusCodeException ex){
             return new ResponseEntity(
-                    "Product is not in cart!", HttpStatus.NO_CONTENT);
+                    "Specific error handling for  : " + ex.getRawStatusCode(), HttpStatus.NOT_FOUND);
         }
-        cartsService.removeItemFromCart(cartId, itemId);
-        return new ResponseEntity(
-                "Product: " + itemId + " is removed from cart " + cartId,
-                HttpStatus.OK);
     }
 
     @PatchMapping("/{cartId}/items/{itemId}")
