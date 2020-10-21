@@ -108,7 +108,7 @@ public class CartsController {
         }catch (ItemAlreadyExistInCartException e){
             return new ResponseEntity(
                     "Item already exist in your cart !",
-                    HttpStatus.NO_CONTENT);
+                    HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity(
