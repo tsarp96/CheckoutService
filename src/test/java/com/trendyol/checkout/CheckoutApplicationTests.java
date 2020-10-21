@@ -73,12 +73,12 @@ class CheckoutApplicationTests {
     }
 
     @Test
-    public void createCart_whenCartIsNew_ShouldReturn201WithProperLocationHeader() throws Exception {
+    public void createCart_whenCartIsNew_ShouldReturn201() throws Exception {
         //Given
         Cart mockCart = new Cart();
         //When
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .post("/carts")
+                .post("/carts?userId=555")
                 .accept(MediaType.APPLICATION_JSON)
                 .content(convertToJson(mockCart))
                 .contentType(MediaType.APPLICATION_JSON);
@@ -87,8 +87,6 @@ class CheckoutApplicationTests {
         MockHttpServletResponse response = result.getResponse();
         //Then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_CREATED);
-        assertThat(response.getHeader(HttpHeaders.LOCATION))
-                .isEqualTo("http://localhost/carts/" + mockCart.getId());
     }
 
     @Test
@@ -235,7 +233,7 @@ class CheckoutApplicationTests {
         MvcResult result = mvc.perform(requestBuilder).andReturn();
         MockHttpServletResponse response = result.getResponse();
         //Then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
     }
     @Test
     public void deleteItem_whenItemIsInCart_ShouldReturn200() throws Exception {
@@ -282,7 +280,7 @@ class CheckoutApplicationTests {
         MvcResult result = mvc.perform(requestBuilder).andReturn();
         MockHttpServletResponse response = result.getResponse();
         //Then
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NO_CONTENT);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_NOT_FOUND);
         assertThat(response.getContentAsString()).isEqualTo("Product is not in cart!");
     }
 
