@@ -16,7 +16,6 @@ public class CartsService {
         this.cartsRepository = cartsRepository;
     }
 
-    @Async
     public void createCart(Cart cart) {
         cartsRepository.insert(cart);
     }

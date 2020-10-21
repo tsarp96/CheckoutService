@@ -1,4 +1,4 @@
-package com.trendyol.checkout.UpdateDto;
+package com.trendyol.checkout.DTOs.UpdateDto;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -3,6 +3,7 @@ package com.trendyol.checkout.domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ public class Cart {
     private double discountRatio;
     public Cart(){
         this.id = UUID.randomUUID().toString();
+        this.products = new ArrayList<>();
     }
 
 

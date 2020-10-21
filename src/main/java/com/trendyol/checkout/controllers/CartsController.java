@@ -1,16 +1,15 @@
 package com.trendyol.checkout.controllers;
 
-import com.trendyol.checkout.UpdateDto.ItemQuantityDTO;
+import com.trendyol.checkout.DTOs.UpdateDto.*;
 import com.trendyol.checkout.domain.Cart;
 import com.trendyol.checkout.domain.Product;
 import com.trendyol.checkout.exceptions.ItemAlreadyExistInCartException;
-import com.trendyol.checkout.exceptions.NoAvailableStockForRequestedProductException;
 import com.trendyol.checkout.services.CartsService;
 import com.trendyol.checkout.services.RestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
@@ -28,21 +27,23 @@ public class CartsController {
     }
 
     @PostMapping
-    public ResponseEntity createCart(@RequestBody Cart cart) {
+    public ResponseEntity createCart(@RequestParam String userId) {
         try {
+            Cart cart = new Cart();
+            cart.setUserId(userId);
             cartsService.createCart(cart);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(cart.getId())
+                    .toUri();
+            return ResponseEntity.created(location).build();
         } catch (RuntimeException ex) {
+            System.out.println(ex.getMessage());
             return new ResponseEntity<>(
-                    "Something went wrong on our side !",
+                    "Cart Service Unavailable !",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(cart.getId())
-                .toUri();
-        return ResponseEntity.created(location).build();
     }
 
     @DeleteMapping("/{cartId}")
