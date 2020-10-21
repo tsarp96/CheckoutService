@@ -27,7 +27,7 @@ public class CartsController {
     }
 
     @PostMapping
-    public ResponseEntity createCart(@RequestParam String userId) {
+    public ResponseEntity createCart(@RequestParam(name = "userId") String userId) {
         try {
             Cart cart = new Cart();
             cart.setUserId(userId);
@@ -72,13 +72,21 @@ public class CartsController {
 
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCartById(@PathVariable String cartId) {
-        Cart cart = cartsService.getCartById(cartId);
-        if (cart == null) {
+        try{
+            Cart cart = cartsService.getCartById(cartId);
+            if (cart == null) {
+                return new ResponseEntity(
+                        "(1) No Cart Found with ID: " + cartId,
+                        HttpStatus.NOT_FOUND);
+            }
+            return ResponseEntity.ok(cart);
+        }catch (Exception ex){
             return new ResponseEntity(
-                    "No Cart Found with ID: " + cartId,
+                    "(2) No Cart Found with ID: " + cartId,
                     HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(cart);
+
+
     }
 
     @PostMapping("/{cartId}/items/{itemId}")
