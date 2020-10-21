@@ -53,13 +53,20 @@ public class CartsController {
 
     @GetMapping
     public ResponseEntity<Cart> getCartByUserId(@RequestParam(name = "userId") String userId) {
-        Cart cart = cartsService.getCartByUserId(userId);
-        if (cart == null) {
+        try{
+            Cart cart = cartsService.getCartByUserId(userId);
+            if (cart == null) {
+                return new ResponseEntity(
+                        "No Cart Found with userID: " + userId,
+                        HttpStatus.NOT_FOUND);
+            }
+            return ResponseEntity.ok(cart);
+        }catch (Exception ex){
+            System.out.println(ex.getMessage());
             return new ResponseEntity(
                     "No Cart Found with userID: " + userId,
                     HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(cart);
     }
 
     @GetMapping("/{cartId}")
@@ -144,14 +151,4 @@ public class CartsController {
 
     }
 
-    //TODO: GET CART REQUEST /carts/{cartsId}
-        //TODO:  GET PRODUCTS  /products/
-        //TODO:  GET STOCKS -- stock control
-    //TODO: DELETE ITEM
-        //TODO: GET PRODUCT
-        //TODO: STOCK CONTROL
-    //TODO: UPDATE ITEM (CHANGE QUANTITY)
-        //TODO: GET PRODUCT
-        //TODO: GET STOCKS
-        // ARRANGE CART - UPDATE CART
 }
