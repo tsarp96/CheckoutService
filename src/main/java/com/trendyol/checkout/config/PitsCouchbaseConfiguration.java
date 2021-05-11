@@ -17,11 +17,11 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import java.time.Duration;
 
 @Configuration
-public class CartsCouchbaseConfiguration {
+public class PitsCouchbaseConfiguration {
 
     private final CouchbaseProperties couchbaseProperties;
 
-    public CartsCouchbaseConfiguration(CouchbaseProperties couchbaseProperties) {
+    public PitsCouchbaseConfiguration(CouchbaseProperties couchbaseProperties) {
         this.couchbaseProperties = couchbaseProperties;
     }
 
@@ -48,7 +48,7 @@ public class CartsCouchbaseConfiguration {
     }
 
     @Bean
-    public Collection cartsCollection(Cluster couchbaseCluster) {
+    public Collection pitsCollection(Cluster couchbaseCluster) {
         couchbaseCluster.bucket(couchbaseProperties.getBucketName()).waitUntilReady(Duration.ofSeconds(122));
         return couchbaseCluster.bucket(couchbaseProperties.getBucketName()).defaultCollection();
     }
