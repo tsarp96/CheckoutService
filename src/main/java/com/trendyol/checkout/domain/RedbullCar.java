@@ -11,6 +11,8 @@ public class RedbullCar implements Car {
     @Autowired
     private Engine Engine;
 
+    private String id;
+
     @Override
     public void Drive() {
         System.out.println("RedbullCar Mode: Drive");
