@@ -5,16 +5,12 @@ import com.trendyol.checkout.domain.RedbullCar;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
-public class CheckoutApplication {
+import java.util.*;
 
-    //public static void main(String[] args) {
-    //    SpringApplication.run(CheckoutApplication.class, args);
-    //}
+@SpringBootApplication
+public class PitServiceApplication {
 
     public static void main(String[] args) {
-        RedbullCar car = new RedbullCar();
-
+        SpringApplication.run(PitServiceApplication.class, args);
     }
-
 }
