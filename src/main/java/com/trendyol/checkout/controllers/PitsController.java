@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -33,5 +34,16 @@ public class PitsController {
                 .buildAndExpand(pit.getPitId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Pit>> getPitsByName(@RequestParam(name = "owner") String owner){
+        return ResponseEntity.ok(pitsService.getPitsByName(owner));
+    }
+
+    @DeleteMapping("/{pitId}")
+    public ResponseEntity<Pit> deletePitById(@RequestParam(name = "pitId") String id){
+        pitsService.deletePitById(id);
+        return ResponseEntity.noContent().build();
     }
 }
