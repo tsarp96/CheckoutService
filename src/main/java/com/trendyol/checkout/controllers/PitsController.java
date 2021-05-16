@@ -22,7 +22,7 @@ public class PitsController {
     }
 
     @PostMapping
-    public ResponseEntity createPit(@RequestParam(name = "owner") String owner){
+    public ResponseEntity<Void> createPit(@RequestParam(name = "owner") String owner){
         Pit pit = new Pit();
         String pitId = UUID.randomUUID().toString();
         pit.setPitId(pitId);
@@ -42,8 +42,8 @@ public class PitsController {
     }
 
     @DeleteMapping("/{pitId}")
-    public ResponseEntity<Pit> deletePitById(@RequestParam(name = "pitId") String id){
-        pitsService.deletePitById(id);
+    public ResponseEntity<Pit> deletePitById(@PathVariable String pitId){
+        pitsService.deletePitById(pitId);
         return ResponseEntity.noContent().build();
     }
 }
