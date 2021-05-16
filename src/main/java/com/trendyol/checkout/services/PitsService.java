@@ -1,5 +1,6 @@
 package com.trendyol.checkout.services;
 
+import com.trendyol.checkout.domain.Car;
 import com.trendyol.checkout.domain.Pit;
 import com.trendyol.checkout.repositories.PitsRepositories;
 import org.springframework.stereotype.Service;
@@ -24,5 +25,9 @@ public class PitsService {
 
     public void deletePitById(String id){
         pitsRepositorty.deletePitById(id);
+    }
+
+    public void addCarToPit(String pitId, Car car){
+        pitsRepositorty.addCarToPit(pitId, car);
     }
 }

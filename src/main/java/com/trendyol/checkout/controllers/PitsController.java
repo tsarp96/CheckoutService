@@ -1,5 +1,6 @@
 package com.trendyol.checkout.controllers;
 
+import com.trendyol.checkout.domain.Car;
 import com.trendyol.checkout.domain.Pit;
 import com.trendyol.checkout.services.PitsService;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/Pits")
+@CrossOrigin
 public class PitsController {
 
     private final PitsService pitsService;
@@ -45,5 +47,11 @@ public class PitsController {
     public ResponseEntity<Pit> deletePitById(@PathVariable String pitId){
         pitsService.deletePitById(pitId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{pitId}/cars")
+    public ResponseEntity<Void> addCarToPit(@PathVariable String pitId, Car car){
+        pitsService.addCarToPit(pitId, car);
+        return ResponseEntity.ok().build();
     }
 }
